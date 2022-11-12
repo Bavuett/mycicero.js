@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "moduleResolution": "node",
+    "module": "commonjs",
+    "target": "ESNext",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "removeComments": false,
+    "alwaysStrict": true,
+    "pretty": true,
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "incremental": false,
+    "noEmitHelpers": true,
+    "importHelpers": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "strictPropertyInitialization": false,
+  },
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}
