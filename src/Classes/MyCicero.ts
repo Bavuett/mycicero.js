@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { Headers, Passengers } from '../Typings/MyCicero';
+import { Headers, Passengers } from '../Types/MyCicero';
 
 class MyCicero {
     readonly baseUrl: string = `https://www.mycicero.it/OTPProxy/host.ashx?url=momoservice/json/FindTPSolutions`
