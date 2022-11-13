@@ -4,6 +4,13 @@
     "moduleResolution": "node",
     "module": "commonjs",
     "target": "ESNext",
+    "lib": [
+      "ESNext",
+      "ESNext.array",
+      "ESNext.AsyncIterable",
+      "ESNext.intl",
+      "ESNext.symbol"
+    ],
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
@@ -21,6 +28,7 @@
   },
   "exclude": [
     "node_modules",
-    "dist"
+    "dist",
+    "tests"
   ]
 }
