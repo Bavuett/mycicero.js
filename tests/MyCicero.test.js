@@ -14,9 +14,18 @@ describe('MyCicero class creation', () => {
 });
 
 describe('MyCicero class methods', () => {
-    it('should run without errors', () => {
-        expect(async () => await myCicero.getSolutions({
+    it('getSolutions() should resolve without errors', async () => {
+        expect(await myCicero.getSolutions({
+            departureLocation: {
+                lat: 48.856614,
+                lon: 2.3522219,
+            },
+            arrivalLocation: {
+                lat: 48.856614,
+                lon: 2.3522219,
+            },
+        }, {
             departureDate: date,
-        })).not.toThrowError();
+        })).resolves;
     });
 });
