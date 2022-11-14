@@ -43,6 +43,6 @@
     "dist/src/*.js",
     "dist/src/*.d.ts",
     "dist/src/**/*.js",
-    "dist/src/*.d.ts"
+    "dist/src/**/*.d.ts"
   ]
 }
