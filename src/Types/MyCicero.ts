@@ -2,10 +2,14 @@ interface Headers {
     [key: string]: string;
 }
 
+interface Location {
+    lat: number,
+    lon: number;
+}
 
-interface Passengers {
-    adults: number;
-    children?: number;
+interface Locations {
+   departureLocation: Location; 
+   arrivalLocation: Location;
 }
 
 interface Dates {
@@ -13,4 +17,9 @@ interface Dates {
     arrivalDate?: Date;
 }
 
-export { Headers, Passengers, Dates };
+interface Passengers {
+    adults: number;
+    children?: number;
+}
+
+export { Headers, Dates, Passengers, Locations };

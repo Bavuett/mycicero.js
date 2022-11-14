@@ -1,8 +1,9 @@
 import fetch from 'node-fetch';
-import { Dates, Headers, Passengers } from '../Types/MyCicero';
+import { Dates, Headers, Locations, Passengers } from '../Types/MyCicero';
+import Solutions from '../Types/Solutions';
 
 class MyCicero {
-    readonly baseUrl: string = `https://www.mycicero.it/OTPProxy/host.ashx?url=momoservice/json/FindTPSolutions`
+    readonly baseUrl: string = `https://www.mycicero.it/OTPProxy/host.ashx?url=momoservice/json/FindTPSolutions`;
     private headers: Headers;
 
     constructor() {
@@ -26,15 +27,30 @@ class MyCicero {
 
     /** 
      * Searches for solutions
+     * @param {Locations} locations Departure and arrival locations
+     * @param {Location} locations.departureLocation Departure location
+     * @param {location} locations.arrivalLocation Arrival location
+     * @param {number} locations.departureLocation.lat Latitude of the departure location
+     * @param {number} locations.departureLocation.lon Longitude of the departure location
+     * @param {number} locations.arrivalLocation.lat Latitude of the arrival location
+     * @param {number} locations.arrivalLocation.lon Longitude of the arrival location
      * @param {Dates} dates Object containing the departure and (optional) arrival dates
      * @param {Date} dates.departureDate Date of departure
      * @param {Date} [dates.arrivalDate] Date of arrival (optional)
      * @param {Passengers} [passengers] Object containing the number of adults and children (optional)
      * @param {number} [passengers.adults] Number of adults (optional)
      * @param {number} [passengers.children] Number of children (optional)
-     * @returns {object} solutions object
+     * @returns {Solutions} Solutions object
     */
-    async getSolutions(dates: Dates, passengers?: Passengers): Promise<void | Object> {
+    async getSolutions(locations: Locations, dates: Dates, passengers?: Passengers): Promise<Solutions | void> {
+        if (!locations.departureLocation || !locations.arrivalLocation) {
+            Promise.reject(new Error('Missing departure or arrival location.'));
+        }
+
+        if (!dates.departureDate) {
+            Promise.reject(new Error('Missing departure date.'));
+        }
+
         const departure: number = Math.floor(dates.departureDate.getTime() / 1000);
         const arrival: number | null = dates.arrivalDate ? Math.floor(dates.arrivalDate.getTime() / 1000) : null;
 
@@ -65,13 +81,13 @@ class MyCicero {
             "DataPartenza": `/Date(${departure}000+0200)/`,
             "PuntoOrigine": {
                 "Formato": 0,
-                "Lat": 42.48879000194779,
-                "Lng": 14.180860023098461
+                "Lat": locations.departureLocation.lat,
+                "Lng": locations.departureLocation.lon
             },
             "PuntoDestinazione": {
                 "Formato": 0,
-                "Lat": 42.470280,
-                "Lng": 14.208690
+                "Lat": locations.arrivalLocation.lat,
+                "Lng": locations.arrivalLocation.lon
             },
             "NumMaxSoluzioni": 8,
             "Intermodale": false,
@@ -86,7 +102,15 @@ class MyCicero {
             body: JSON.stringify(requestBody),
         });
 
+        if (response.status !== 200) {
+            Promise.reject(new Error(`Server responded with status code ${response.status}`));
+        }
+
         const data = await response.json();
+
+        if (data.error) {
+            Promise.reject(new Error(data.error));
+        }
 
         return data;
     }
