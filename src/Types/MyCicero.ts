@@ -8,4 +8,9 @@ interface Passengers {
     children?: number;
 }
 
-export { Headers, Passengers };
+interface Dates {
+    departureDate: Date;
+    arrivalDate?: Date;
+}
+
+export { Headers, Passengers, Dates };

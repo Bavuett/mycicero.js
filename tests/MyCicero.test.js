@@ -15,6 +15,8 @@ describe('MyCicero class creation', () => {
 
 describe('MyCicero class methods', () => {
     it('should run without errors', () => {
-        expect(async () => await myCicero.getSolutions(date)).not.toThrowError();
+        expect(async () => await myCicero.getSolutions({
+            departureDate: date,
+        })).not.toThrowError();
     });
 });

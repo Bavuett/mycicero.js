@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { Headers, Passengers } from '../Types/MyCicero';
+import { Dates, Headers, Passengers } from '../Types/MyCicero';
 
 class MyCicero {
     readonly baseUrl: string = `https://www.mycicero.it/OTPProxy/host.ashx?url=momoservice/json/FindTPSolutions`
@@ -26,12 +26,17 @@ class MyCicero {
 
     /** 
      * Searches for solutions
-     * @param {Date} [departureTime] The departure time
+     * @param {Dates} dates Object containing the departure and (optional) arrival dates
+     * @param {Date} dates.departureDate Date of departure
+     * @param {Date} [dates.arrivalDate] Date of arrival (optional)
      * @param {Passengers} [passengers] Object containing the number of adults and children (optional)
+     * @param {number} [passengers.adults] Number of adults (optional)
+     * @param {number} [passengers.children] Number of children (optional)
      * @returns {object} solutions object
     */
-    async getSolutions(departureTime: Date, passengers?: Passengers): Promise<void | Object> {
-        const departure: number = Math.floor(departureTime.getTime() / 1000);
+    async getSolutions(dates: Dates, passengers?: Passengers): Promise<void | Object> {
+        const departure: number = Math.floor(dates.departureDate.getTime() / 1000);
+        const arrival: number | null = dates.arrivalDate ? Math.floor(dates.arrivalDate.getTime() / 1000) : null;
 
         console.log(`departure: ${departure}`);
 
@@ -48,8 +53,8 @@ class MyCicero {
                 3,
                 15
             ],
-            "OraDa": `/Date(${departure}000+0000)/`,
-            "OraA": null,
+            "OraDa": `/Date(${departure}000+0200)/`,
+            "OraA": arrival ? `/Date(${arrival}000+0200)/` : null,
             "ArrOraA": null,
             "ArrOraDa": null,
             "Ordinamento": {
@@ -57,7 +62,7 @@ class MyCicero {
                 "Direzione": 0
             },
             "ActivateRunsOnNextDay": true,
-            "DataPartenza": `/Date(${departure}000+0000)/`,
+            "DataPartenza": `/Date(${departure}000+0200)/`,
             "PuntoOrigine": {
                 "Formato": 0,
                 "Lat": 42.48879000194779,
