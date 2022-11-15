@@ -8,13 +8,18 @@ interface Location {
 }
 
 interface Locations {
-   departureLocation: Location; 
-   arrivalLocation: Location;
+   departure: Location; 
+   arrival: Location;
 }
 
 interface Dates {
-    departureDate: Date;
-    arrivalDate?: Date;
+    departure: Date;
+    arrival?: Date;
+}
+
+interface UnixDates {
+    departure: number;
+    arrival?: number;
 }
 
 interface Passengers {
@@ -22,4 +27,4 @@ interface Passengers {
     children?: number;
 }
 
-export { Headers, Dates, Passengers, Locations };
+export { Headers, Dates, UnixDates, Passengers, Locations };

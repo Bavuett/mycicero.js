@@ -16,16 +16,16 @@ describe('MyCicero class creation', () => {
 describe('MyCicero class methods', () => {
     it('getSolutions() should resolve without errors', async () => {
         expect(await myCicero.getSolutions({
-            departureLocation: {
+            departure: {
                 lat: 48.856614,
                 lon: 2.3522219,
             },
-            arrivalLocation: {
+            arrival: {
                 lat: 48.856614,
                 lon: 2.3522219,
             },
         }, {
-            departureDate: date,
+            departure: date,
         })).resolves;
     });
 });

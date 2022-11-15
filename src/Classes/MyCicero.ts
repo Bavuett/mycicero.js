@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { Dates, Headers, Locations, Passengers } from '../Types/MyCicero';
+import { Dates, Headers, Locations, Passengers, UnixDates } from '../Types/MyCicero';
 import Solutions from '../Types/Solutions';
 
 class MyCicero {
@@ -28,33 +28,48 @@ class MyCicero {
     /** 
      * Searches for solutions
      * @param {Locations} locations Departure and arrival locations
-     * @param {Location} locations.departureLocation Departure location
-     * @param {location} locations.arrivalLocation Arrival location
-     * @param {number} locations.departureLocation.lat Latitude of the departure location
-     * @param {number} locations.departureLocation.lon Longitude of the departure location
-     * @param {number} locations.arrivalLocation.lat Latitude of the arrival location
-     * @param {number} locations.arrivalLocation.lon Longitude of the arrival location
+     * @param {Location} locations.departure Departure location
+     * @param {location} locations.arrival Arrival location
+     * @param {number} locations.departure.lat Latitude of the departure location
+     * @param {number} locations.departure.lon Longitude of the departure location
+     * @param {number} locations.arrival.lat Latitude of the arrival location
+     * @param {number} locations.arrival.lon Longitude of the arrival location
      * @param {Dates} dates Object containing the departure and (optional) arrival dates
-     * @param {Date} dates.departureDate Date of departure
-     * @param {Date} [dates.arrivalDate] Date of arrival (optional)
+     * @param {Date} dates.departure Date of departure
+     * @param {Date} [dates.arrival] Date of arrival (optional)
      * @param {Passengers} [passengers] Object containing the number of adults and children (optional)
      * @param {number} [passengers.adults] Number of adults (optional)
      * @param {number} [passengers.children] Number of children (optional)
      * @returns {Solutions} Solutions object
     */
     async getSolutions(locations: Locations, dates: Dates, passengers?: Passengers): Promise<Solutions | void> {
-        if (!locations.departureLocation || !locations.arrivalLocation) {
+        if (!locations.departure || !locations.arrival) {
             Promise.reject(new Error('Missing departure or arrival location.'));
         }
 
-        if (!dates.departureDate) {
+        if (!dates.departure) {
             Promise.reject(new Error('Missing departure date.'));
         }
+        
+        // Make sure the locations are with six decimal places.
+        const locationSettings: Locations = {
+            departure: {
+                lat: Math.round(locations.departure.lat * 1000000) / 1000000,
+                lon: Math.round(locations.departure.lon * 1000000) / 1000000
+            },
+            arrival: {
+                lat: Math.round(locations.arrival.lat * 1000000) / 1000000,
+                lon: Math.round(locations.arrival.lon * 1000000) / 1000000
+            }
+        }
 
-        const departure: number = Math.floor(dates.departureDate.getTime() / 1000);
-        const arrival: number | null = dates.arrivalDate ? Math.floor(dates.arrivalDate.getTime() / 1000) : null;
+        // Convert dates to Unix timestamps because MyCicero only accepts them in this format.
+        const datesSettings: UnixDates = {
+            departure: Math.floor(dates.departure.getTime() / 1000),
+            arrival: dates.arrival ? Math.floor(dates.arrival.getTime() / 1000) : undefined
+        }
 
-        console.log(`departure: ${departure}`);
+        console.log(`Searching for solutions from ${locationSettings.departure.lat}, ${locationSettings.departure.lon} to ${locationSettings.arrival.lat}, ${locationSettings.arrival.lon} on ${datesSettings.departure}.`);
 
         const requestBody = {
             "Ambiente": {
@@ -69,8 +84,8 @@ class MyCicero {
                 3,
                 15
             ],
-            "OraDa": `/Date(${departure}000+0200)/`,
-            "OraA": arrival ? `/Date(${arrival}000+0200)/` : null,
+            "OraDa": `/Date(${datesSettings.departure}000+0200)/`,
+            "OraA": datesSettings.arrival ? `/Date(${datesSettings.arrival}000+0200)/` : null,
             "ArrOraA": null,
             "ArrOraDa": null,
             "Ordinamento": {
@@ -78,16 +93,16 @@ class MyCicero {
                 "Direzione": 0
             },
             "ActivateRunsOnNextDay": true,
-            "DataPartenza": `/Date(${departure}000+0200)/`,
+            "DataPartenza": `/Date(${datesSettings.departure}000+0200)/`,
             "PuntoOrigine": {
                 "Formato": 0,
-                "Lat": locations.departureLocation.lat,
-                "Lng": locations.departureLocation.lon
+                "Lat": locations.departure.lat,
+                "Lng": locations.departure.lon
             },
             "PuntoDestinazione": {
                 "Formato": 0,
-                "Lat": locations.arrivalLocation.lat,
-                "Lng": locations.arrivalLocation.lon
+                "Lat": locations.arrival.lat,
+                "Lng": locations.arrival.lon
             },
             "NumMaxSoluzioni": 8,
             "Intermodale": false,
