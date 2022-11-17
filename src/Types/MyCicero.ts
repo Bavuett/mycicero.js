@@ -27,4 +27,4 @@ interface Passengers {
     children?: number;
 }
 
-export { Headers, Dates, UnixDates, Passengers, Locations };
+export { Headers, Dates, UnixDates, Passengers, Location, Locations };

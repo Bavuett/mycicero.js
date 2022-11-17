@@ -28,4 +28,11 @@ describe('MyCicero class methods', () => {
             departure: date,
         })).resolves;
     });
+
+    it('getNearestStops() should resolve without errors', async () => {
+        expect(await myCicero.getNearestStops({
+            lat: 48.856614,
+            lon: 2.3522219,
+        })).resolves;
+    });
 });

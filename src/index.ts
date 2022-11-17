@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { Dates, Headers, Locations, Passengers, UnixDates } from './Types/MyCicero';
+import { Dates, Headers, Location, Locations, Passengers, UnixDates } from './Types/MyCicero';
 import Solutions from './Types/Solutions';
 
 export class MyCicero {
@@ -43,6 +43,7 @@ export class MyCicero {
      * @returns {Solutions} Solutions object
     */
     async getSolutions(locations: Locations, dates: Dates, passengers?: Passengers): Promise<Solutions | void> {
+        // Make sure all the data necessary for the request is available.
         if (!locations.departure || !locations.arrival) {
             Promise.reject(new Error('Missing departure or arrival location.'));
         }
@@ -50,7 +51,7 @@ export class MyCicero {
         if (!dates.departure) {
             Promise.reject(new Error('Missing departure date.'));
         }
-        
+
         // Make sure the locations are with six decimal places.
         const locationSettings: Locations = {
             departure: {
@@ -112,6 +113,68 @@ export class MyCicero {
         }
 
         const response = await fetch(`${this.baseUrl}/FindTPSolutions`, {
+            method: 'POST',
+            headers: this.headers,
+            body: JSON.stringify(requestBody),
+        });
+
+        if (response.status !== 200) {
+            Promise.reject(new Error(`Server responded with status code ${response.status}.`));
+        }
+
+        const data = await response.json();
+
+        if (data.error) {
+            Promise.reject(new Error(data.error));
+        }
+
+        return data;
+    }
+
+    /**
+     * Gets the nearest stops to a location
+     * @param {Location} location Location where to search for stops
+     * @param {number} location.lat Latitude of the location
+     * @param {number} location.lon Longitude of the location
+     * @param {number} [radius] Radius in meters (optional)
+     * @returns {Stops} Stops object
+    */
+    async getNearestStops(location: Location, radius?: number): Promise<Object | void> {
+        // Make sure all the data necessary for the request is available.
+        if (!location.lat || !location.lon) {
+            Promise.reject(new Error('Missing location.'));
+        }
+
+        // Make sure the location is with six decimal places.
+        const locationSettings: Location = {
+            lat: Math.round(location.lat * 1000000) / 1000000,
+            lon: Math.round(location.lon * 1000000) / 1000000
+        }
+
+        const requestBody = {
+            "Ambiente": {
+                "Ambiti": [
+                    0
+                ]
+            },
+            "DevicePosition": {
+                "Formato": 0,
+                "Lat": locationSettings.lat,
+                "Lng": locationSettings.lon
+            },
+            "DistanzaMetri": radius ?? 500,
+            "IdDevice": "DEBUG",
+            "Punto": {
+                "Formato": 0,
+                "Lat": locationSettings.lat,
+                "Lng": locationSettings.lon
+            },
+            "SecurityToken": "MTEtMTctMjAyMiAxMToxNjE2NzM="
+        };
+
+        console.log(`Searching for stops near ${locationSettings.lat}, ${locationSettings.lon}.`);
+
+        const response = await fetch(`${this.baseUrl}/GetNearestStops`, {
             method: 'POST',
             headers: this.headers,
             body: JSON.stringify(requestBody),
