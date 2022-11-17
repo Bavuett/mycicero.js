@@ -169,7 +169,6 @@ export class MyCicero {
                 "Lat": locationSettings.lat,
                 "Lng": locationSettings.lon
             },
-            "SecurityToken": "MTEtMTctMjAyMiAxMToxNjE2NzM="
         };
 
         console.log(`Searching for stops near ${locationSettings.lat}, ${locationSettings.lon}.`);
