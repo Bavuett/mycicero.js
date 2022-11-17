@@ -3,7 +3,7 @@ import { Dates, Headers, Locations, Passengers, UnixDates } from './Types/MyCice
 import Solutions from './Types/Solutions';
 
 export class MyCicero {
-    readonly baseUrl: string = `https://www.mycicero.it/OTPProxy/host.ashx?url=momoservice/json/FindTPSolutions`;
+    readonly baseUrl: string = `https://www.mycicero.it/OTPProxy/host.ashx?url=momoservice/json`;
     private headers: Headers;
 
     constructor() {
@@ -111,7 +111,7 @@ export class MyCicero {
             "MaxDistanzaAPiedi": null
         }
 
-        const response = await fetch(this.baseUrl, {
+        const response = await fetch(`${this.baseUrl}/FindTPSolutions`, {
             method: 'POST',
             headers: this.headers,
             body: JSON.stringify(requestBody),
