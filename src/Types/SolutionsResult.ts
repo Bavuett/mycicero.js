@@ -178,7 +178,7 @@ interface Oggetti {
     PrezzoSoluzione: number;
 }
 
-export default interface Solutions {
+export default interface SolutionsResult {
     Codice?: any;
     Descrizione?: any;
     IdRichiesta: string;

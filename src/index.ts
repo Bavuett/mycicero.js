@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 import { Dates, Headers, Location, Locations, Passengers, UnixDates } from './Types/MyCicero';
-import Solutions from './Types/Solutions';
+import SolutionsResult from './Types/SolutionsResult';
 
 export class MyCicero {
     readonly baseUrl: string = `https://www.mycicero.it/OTPProxy/host.ashx?url=momoservice/json`;
@@ -42,7 +42,7 @@ export class MyCicero {
      * @param {number} [passengers.children] Number of children (optional)
      * @returns {Solutions} Solutions object
     */
-    async getSolutions(locations: Locations, dates: Dates, passengers?: Passengers): Promise<Solutions | void> {
+    async getSolutions(locations: Locations, dates: Dates, passengers?: Passengers): Promise<SolutionsResult | void> {
         // Make sure all the data necessary for the request is available.
         if (!locations.departure || !locations.arrival) {
             Promise.reject(new Error('Missing departure or arrival location.'));
@@ -122,11 +122,7 @@ export class MyCicero {
             Promise.reject(new Error(`Server responded with status code ${response.status}.`));
         }
 
-        const data = await response.json();
-
-        if (data.error) {
-            Promise.reject(new Error(data.error));
-        }
+        const data: SolutionsResult = await response.json();
 
         return data;
     }
