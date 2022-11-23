@@ -17,12 +17,12 @@ describe('MyCicero class methods', () => {
     it('getSolutions() should resolve without errors', async () => {
         expect(await myCicero.getSolutions({
             departure: {
-                lat: 48.856614,
-                lon: 2.3522219,
+                lat: 42.4477,
+                lon: 14.2080,
             },
             arrival: {
-                lat: 48.856614,
-                lon: 2.3522219,
+                lat: 42.4738,
+                lon: 14.1925,
             },
         }, {
             departure: date,

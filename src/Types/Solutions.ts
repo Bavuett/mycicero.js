@@ -18,7 +18,7 @@ interface Routes {
 
 interface Line {
     description: string;
-    lineNumber: number;
+    lineNumber: string;
     company: Company;
     bookingNeeded: boolean;
     type: string;
@@ -27,7 +27,6 @@ interface Line {
 
 interface Stop {
     description: string;
-    type: string;
     location: Location;
 }
 

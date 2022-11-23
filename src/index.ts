@@ -1,5 +1,6 @@
 import fetch from 'node-fetch';
 import { Dates, Headers, Location, Locations, Passengers, UnixDates } from './Types/MyCicero';
+import { Solutions } from './Types/Solutions';
 import SolutionsResult from './Types/SolutionsResult';
 
 export class MyCicero {
@@ -42,7 +43,7 @@ export class MyCicero {
      * @param {number} [passengers.children] Number of children (optional)
      * @returns {Solutions} Solutions object
     */
-    async getSolutions(locations: Locations, dates: Dates, passengers?: Passengers): Promise<SolutionsResult | void> {
+    async getSolutions(locations: Locations, dates: Dates, passengers?: Passengers): Promise<Solutions | void> {
         // Make sure all the data necessary for the request is available.
         if (!locations.departure || !locations.arrival) {
             Promise.reject(new Error('Missing departure or arrival location.'));
@@ -124,7 +125,64 @@ export class MyCicero {
 
         const data: SolutionsResult = await response.json();
 
-        return data;
+        // TODO: Further improve formatting.
+        let result: Solutions = {
+            solutions: [],
+        };
+        
+        data.Oggetti.map((item, index) => {
+            result.solutions.push({
+                price: item.PrezzoSoluzione,
+                arrival: item.DataOraArrivo,
+                departure: item.DataOraPartenza,
+                minutes: {
+                    total: item.MinutiTotali,
+                    onFoot: item.MinutiPiedi,
+                    onVehicle: item.MinutiBordo
+                },
+                meters: {
+                    total: item.MetriTotali,
+                    onFoot: item.MetriPiedi,
+                    onVehicle: item.MetriBordo
+                },
+                co2Emission: item.EmissioneCO2,
+                type: item.TipoSoluzione,
+                routes: []
+            });
+
+            item.Tratte.map((route) => {
+                result.solutions[index].routes.push({
+                    line: {
+                        description: route.Linea.Descrizione,
+                        lineNumber: route.Linea.CodiceInfoUtenza,
+                        company: {
+                            code: route.Linea.CodiceAzienda,
+                            name: route.Linea.Vettore,
+                            logoUrl: route.Linea.LogoVettore
+                        },
+                        bookingNeeded: route.Linea.PrenotazioneObbligatoria,
+                        type: route.Linea.TipoServizio,
+                        extraurban: route.Linea.Extraurbano
+                    },
+                    departure: {
+                        description: route.LocalitaSalita.Descrizione,
+                        location: {
+                            lat: route.LocalitaSalita.Coordinate.Lat,
+                            lon: route.LocalitaSalita.Coordinate.Lng
+                        },
+                    },
+                    arrival: {
+                        description: route.LocalitaDiscesa.Descrizione,
+                        location: {
+                            lat: route.LocalitaDiscesa.Coordinate.Lat,
+                            lon: route.LocalitaDiscesa.Coordinate.Lng
+                        }
+                    }
+                });
+            });
+        });
+
+        return result;
     }
 
     /**
@@ -180,10 +238,6 @@ export class MyCicero {
         }
 
         const data = await response.json();
-
-        if (data.error) {
-            Promise.reject(new Error(data.error));
-        }
 
         return data;
     }
