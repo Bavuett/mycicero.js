@@ -123,7 +123,9 @@ export class MyCicero {
             Promise.reject(new Error(`Server responded with status code ${response.status}.`));
         }
 
-        const data: SolutionsResult = await response.json();
+        const data: SolutionsResult = await response.json().catch((err) => {
+            Promise.reject(new Error(`Error parsing JSON: ${err}`));
+        });
 
         // TODO: Further improve formatting.
         let result: Solutions = {
@@ -237,7 +239,9 @@ export class MyCicero {
             Promise.reject(new Error(`Server responded with status code ${response.status}.`));
         }
 
-        const data = await response.json();
+        const data = await response.json().catch((err) => {
+            Promise.reject(new Error(`Error parsing JSON: ${err}`));
+        });
 
         return data;
     }
