@@ -2,6 +2,7 @@ import fetch from 'node-fetch';
 import { Dates, Headers, Location, Locations, Passengers, UnixDates } from './Types/MyCicero';
 import { Solutions } from './Types/Solutions';
 import SolutionsResult from './Types/SolutionsResult';
+import StopsResult from './Types/StopsResult';
 
 export class MyCicero {
     readonly baseUrl: string = `https://www.mycicero.it/OTPProxy/host.ashx?url=momoservice/json`;
@@ -239,7 +240,7 @@ export class MyCicero {
             Promise.reject(new Error(`Server responded with status code ${response.status}.`));
         }
 
-        const data = await response.json().catch((err) => {
+        const data: StopsResult = await response.json().catch((err) => {
             Promise.reject(new Error(`Error parsing JSON: ${err}`));
         });
 
