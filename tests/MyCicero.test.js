@@ -31,8 +31,8 @@ describe('MyCicero class methods', () => {
 
     test('getNearestStops() should resolve without errors', () => {
         myCicero.getNearestStops({
-            lat: 48.856614,
-            lon: 2.3522219,
+            lat: 42.4477,
+            lon: 14.2080,
         }).resolves;
     });
 });
