@@ -2,13 +2,16 @@ import fetch from 'node-fetch';
 import { Dates, Headers, Location, Locations, Passengers, UnixDates } from './Types/MyCicero';
 import { Solutions } from './Types/Solutions';
 import SolutionsResult from './Types/SolutionsResult';
+import Stops from './Types/Stops';
 import StopsResult from './Types/StopsResult';
 
 export class MyCicero {
-    readonly baseUrl: string = `https://www.mycicero.it/OTPProxy/host.ashx?url=momoservice/json`;
+    private readonly baseUrl: string;
     private headers: Headers;
 
     constructor() {
+        this.baseUrl = `https://www.mycicero.it/OTPProxy/host.ashx?url=momoservice/json`;
+
         this.headers = {
             'Accept': 'application/json, text/plain, */*',
             'Accept-Language': 'en-US,en;q=0.9,it-IT;q=0.8,it;q=0.7',
@@ -45,13 +48,13 @@ export class MyCicero {
      * @returns {Solutions} Solutions object
     */
     async getSolutions(locations: Locations, dates: Dates, passengers?: Passengers): Promise<Solutions | void> {
-        // Make sure all the data necessary for the request is available.
+        // Make sure all the data necessary for the request is available. TODO: Improve this. Doesn't work in some cases.
         if (!locations.departure || !locations.arrival) {
-            Promise.reject(new Error('Missing departure or arrival location.'));
+            throw new Error('Missing departure or arrival location.');
         }
 
         if (!dates.departure) {
-            Promise.reject(new Error('Missing departure date.'));
+            throw new Error('Missing departure date.');
         }
 
         // Make sure the locations are with six decimal places.
@@ -71,8 +74,6 @@ export class MyCicero {
             departure: Math.floor(dates.departure.getTime() / 1000),
             arrival: dates.arrival ? Math.floor(dates.arrival.getTime() / 1000) : undefined
         }
-
-        console.log(`Searching for solutions from ${locationSettings.departure.lat}, ${locationSettings.departure.lon} to ${locationSettings.arrival.lat}, ${locationSettings.arrival.lon} on ${datesSettings.departure}.`);
 
         const requestBody = {
             "Ambiente": {
@@ -121,11 +122,11 @@ export class MyCicero {
         });
 
         if (response.status !== 200) {
-            Promise.reject(new Error(`Server responded with status code ${response.status}.`));
+            throw new Error(`Server responded with status code ${response.status}.`);
         }
 
         const data: SolutionsResult = await response.json().catch((err) => {
-            Promise.reject(new Error(`Error parsing JSON: ${err}`));
+            throw new Error(`Error parsing JSON: ${err}`);
         });
 
         // TODO: Further improve formatting.
@@ -199,7 +200,7 @@ export class MyCicero {
     async getNearestStops(location: Location, radius?: number): Promise<Object | void> {
         // Make sure all the data necessary for the request is available.
         if (!location.lat || !location.lon) {
-            Promise.reject(new Error('Missing location.'));
+            throw new Error('Missing location.');
         }
 
         // Make sure the location is with six decimal places.
@@ -237,13 +238,32 @@ export class MyCicero {
         });
 
         if (response.status !== 200) {
-            Promise.reject(new Error(`Server responded with status code ${response.status}.`));
+            throw new Error(`Server responded with status code ${response.status}.`);
         }
 
         const data: StopsResult = await response.json().catch((err) => {
-            Promise.reject(new Error(`Error parsing JSON: ${err}`));
+            throw new Error(`Error parsing JSON: ${err}`);
         });
 
-        return data;
+        let result: Stops = {
+            stops: []
+        }
+
+        // TODO: Further improve formatting.
+        data.Oggetti.map((item) => {
+            result.stops.push({
+                description: item.Descrizione,
+                stopCode: item.CodiceInfoUtenza,
+                company: item.CodAzienda,
+                location: {
+                    lat: item.Coordinate.Lat,
+                    lon: item.Coordinate.Lng
+                },
+                city: item.Comune,
+                distance: item.Distanza
+            });
+        });
+
+        return result;
     }
 }
