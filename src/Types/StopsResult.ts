@@ -4,36 +4,27 @@ interface Coordinate {
     Lng: number;
 }
 
-interface Fermata {
-    __type: string;
+interface Oggetti {
     CodAzienda: string;
     CodGruppoFermate: string;
     Codice: string;
     Coordinate: Coordinate;
     Descrizione: string;
-    TipoLocalita?: any;
+    TipoLocalita: number;
     CodiceFermataUtenza: string;
     CodiceInfoUtenza: string;
     Comune: string;
     IdSistema: string;
-    Indirizzo: string;
+    Indirizzo?: any;
     ModalitaTrasporto: number;
-    PesoLocalita?: any;
+    PesoLocalita: number;
     Servizi?: any;
     StopSequence?: any;
     Tipo: number;
-    UrlRealtimePage: string;
-    VersioneTPS?: any;
-    Ambito?: any;
-    Distanza?: any;
-}
-
-interface Oggetto {
-    Fermata: Fermata;
-    MessaggiRealTime?: any;
-    Passaggi: any[];
-    PassaggiLinee: any[];
-    PassaggiPerLinea?: any;
+    UrlRealtimePage?: any;
+    VersioneTPS: string;
+    Ambito: number;
+    Distanza: number;
 }
 
 export default interface StopsResult {
@@ -42,6 +33,6 @@ export default interface StopsResult {
     IdRichiesta?: any;
     IdSistema: string;
     Tipo: number;
-    Oggetto: Oggetto;
+    Oggetti: Oggetti[];
 }
 
