@@ -27,4 +27,15 @@ interface Passengers {
     children?: number;
 }
 
-export { Headers, Dates, UnixDates, Passengers, Location, Locations };
+interface GetSolutionsSettings {
+    locations: Locations;
+    dates: Dates;
+    passengers?: Passengers;
+}
+
+interface GetNearestStopsSettings {
+    location: Location;
+    radius?: number;
+}
+
+export { Headers, Dates, UnixDates, Passengers, Location, Locations, GetSolutionsSettings, GetNearestStopsSettings };

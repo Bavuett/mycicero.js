@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
-import { Dates, Headers, Location, Locations, Passengers, UnixDates } from './Types/MyCicero';
-import { Solutions } from './Types/Solutions';
+import { Dates, GetNearestStopsSettings, GetSolutionsSettings, Headers, Location, Locations, Passengers, UnixDates } from './Types/MyCicero';
+import Solutions from './Types/Solutions';
 import SolutionsResult from './Types/SolutionsResult';
 import Stops from './Types/Stops';
 import StopsResult from './Types/StopsResult';
@@ -32,47 +32,48 @@ export class MyCicero {
 
     /** 
      * Searches for solutions
-     * @param {Locations} locations Departure and arrival locations
-     * @param {Location} locations.departure Departure location
-     * @param {location} locations.arrival Arrival location
-     * @param {number} locations.departure.lat Latitude of the departure location
-     * @param {number} locations.departure.lon Longitude of the departure location
-     * @param {number} locations.arrival.lat Latitude of the arrival location
-     * @param {number} locations.arrival.lon Longitude of the arrival location
-     * @param {Dates} dates Object containing the departure and (optional) arrival dates
-     * @param {Date} dates.departure Date of departure
-     * @param {Date} [dates.arrival] Date of arrival (optional)
-     * @param {Passengers} [passengers] Object containing the number of adults and children (optional)
-     * @param {number} [passengers.adults] Number of adults (optional)
-     * @param {number} [passengers.children] Number of children (optional)
+     * @param {GetSolutionsSettings} settings Settings for the request.
+     * @param {Locations} settings.locations Locations of your trip.
+     * @param {Location} settings.locations.departure Departure location.
+     * @param {number} settings.locations.departure.lat Latitude of the departure location.
+     * @param {number} settings.locations.departure.lon Longitude of the departure location.
+     * @param {Location} settings.locations.arrival Arrival location.
+     * @param {number} settings.locations.arrival.lat Latitude of the arrival location.
+     * @param {number} settings.locations.arrival.lon Longitude of the arrival location.
+     * @param {Dates} settings.dates Dates of your trip.
+     * @param {Date} settings.dates.departure Departure date.
+     * @param {Date} [settings.dates.arrival] Arrival date - optional.
+     * @param {Passengers} [settings.passengers] Passengers of your trip - optional.
+     * @param {number} settings.passengers.adults Number of adults.
+     * @param {number} [settings.passengers.children] Number of children - optional.
      * @returns {Solutions} Solutions object
     */
-    async getSolutions(locations: Locations, dates: Dates, passengers?: Passengers): Promise<Solutions | void> {
+    async getSolutions(settings: GetSolutionsSettings): Promise<Solutions | void> {
         // Make sure all the data necessary for the request is available. TODO: Improve this. Doesn't work in some cases.
-        if (!locations.departure || !locations.arrival) {
+        if (!settings.locations.departure || !settings.locations.arrival) {
             throw new Error('Missing departure or arrival location.');
         }
 
-        if (!dates.departure) {
+        if (!settings.dates.departure) {
             throw new Error('Missing departure date.');
         }
 
         // Make sure the locations are with six decimal places.
         const locationSettings: Locations = {
             departure: {
-                lat: Math.round(locations.departure.lat * 1000000) / 1000000,
-                lon: Math.round(locations.departure.lon * 1000000) / 1000000
+                lat: Math.round(settings.locations.departure.lat * 1000000) / 1000000,
+                lon: Math.round(settings.locations.departure.lon * 1000000) / 1000000
             },
             arrival: {
-                lat: Math.round(locations.arrival.lat * 1000000) / 1000000,
-                lon: Math.round(locations.arrival.lon * 1000000) / 1000000
+                lat: Math.round(settings.locations.arrival.lat * 1000000) / 1000000,
+                lon: Math.round(settings.locations.arrival.lon * 1000000) / 1000000
             }
         }
 
         // Convert dates to Unix timestamps because MyCicero only accepts them in this format.
         const datesSettings: UnixDates = {
-            departure: Math.floor(dates.departure.getTime() / 1000),
-            arrival: dates.arrival ? Math.floor(dates.arrival.getTime() / 1000) : undefined
+            departure: Math.floor(settings.dates.departure.getTime() / 1000),
+            arrival: settings.dates.arrival ? Math.floor(settings.dates.arrival.getTime() / 1000) : undefined
         }
 
         const requestBody = {
@@ -81,8 +82,8 @@ export class MyCicero {
                     0
                 ]
             },
-            "NumeroAdulti": passengers?.adults ?? 1,
-            "NumeroRagazzi": passengers?.children ?? 0,
+            "NumeroAdulti": settings.passengers?.adults ?? 1,
+            "NumeroRagazzi": settings.passengers?.children ?? 0,
             "FiltroModalita": [
                 1,
                 3,
@@ -100,13 +101,13 @@ export class MyCicero {
             "DataPartenza": `/Date(${datesSettings.departure}000+0200)/`,
             "PuntoOrigine": {
                 "Formato": 0,
-                "Lat": locations.departure.lat,
-                "Lng": locations.departure.lon
+                "Lat": locationSettings.departure.lat,
+                "Lng": locationSettings.departure.lon
             },
             "PuntoDestinazione": {
                 "Formato": 0,
-                "Lat": locations.arrival.lat,
-                "Lng": locations.arrival.lon
+                "Lat": locationSettings.arrival.lat,
+                "Lng": locationSettings.arrival.lon
             },
             "NumMaxSoluzioni": 8,
             "Intermodale": false,
@@ -191,22 +192,23 @@ export class MyCicero {
 
     /**
      * Gets the nearest stops to a location
-     * @param {Location} location Location where to search for stops
-     * @param {number} location.lat Latitude of the location
-     * @param {number} location.lon Longitude of the location
-     * @param {number} [radius] Radius in meters (optional)
-     * @returns {Stops} Stops object
+     * @param {GetNearestStopsSettings} settings Settings for the request.
+     * @param {Location} settings.location Location to search for.
+     * @param {number} settings.location.lat Latitude of the location.
+     * @param {number} settings.location.lon Longitude of the location.
+     * @param {number} [settings.radius] Radius in meters to search for stops - optional.
+     * @returns {Stops} Stops object.
     */
-    async getNearestStops(location: Location, radius?: number): Promise<Object | void> {
+    async getNearestStops(settings: GetNearestStopsSettings): Promise<Object | void> {
         // Make sure all the data necessary for the request is available.
-        if (!location.lat || !location.lon) {
+        if (!settings.location.lat || !settings.location.lon) {
             throw new Error('Missing location.');
         }
 
         // Make sure the location is with six decimal places.
         const locationSettings: Location = {
-            lat: Math.round(location.lat * 1000000) / 1000000,
-            lon: Math.round(location.lon * 1000000) / 1000000
+            lat: Math.round(settings.location.lat * 1000000) / 1000000,
+            lon: Math.round(settings.location.lon * 1000000) / 1000000
         }
 
         const requestBody = {
@@ -220,7 +222,7 @@ export class MyCicero {
                 "Lat": locationSettings.lat,
                 "Lng": locationSettings.lon
             },
-            "DistanzaMetri": radius ?? 500,
+            "DistanzaMetri": settings.radius ?? 500,
             "IdDevice": "DEBUG",
             "Punto": {
                 "Formato": 0,
@@ -228,8 +230,6 @@ export class MyCicero {
                 "Lng": locationSettings.lon
             },
         };
-
-        console.log(`Searching for stops near ${locationSettings.lat}, ${locationSettings.lon}.`);
 
         const response = await fetch(`${this.baseUrl}/GetNearestStops`, {
             method: 'POST',
