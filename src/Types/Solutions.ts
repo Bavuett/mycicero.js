@@ -53,6 +53,6 @@ interface Solution {
     co2Emission: number;
 }
 
-export interface Solutions {
+export default interface Solutions {
     solutions: Solution[];
 }
