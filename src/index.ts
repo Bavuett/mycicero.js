@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { Dates, GetNearestStopsSettings, GetSolutionsSettings, Headers, Location, Locations, Passengers, UnixDates } from './Types/MyCicero';
+import { Dates, GetNearestStopsSettings, GetSolutionsSettings, Headers, Location, Locations, NearestStopsFetchParams, Passengers, UnixDates } from './Types/MyCicero';
 import Solutions from './Types/Solutions';
 import SolutionsResult from './Types/SolutionsResult';
 import Stops from './Types/Stops';
@@ -199,17 +199,19 @@ export class MyCicero {
      * @param {number} [settings.radius] Radius in meters to search for stops - optional.
      * @returns {Stops} Stops object.
     */
-    async getNearestStops(settings: GetNearestStopsSettings): Promise<Object | void> {
+    async getNearestStops(settings: GetNearestStopsSettings): Promise<Stops | void> {
         // Make sure all the data necessary for the request is available.
         if (!settings.location.lat || !settings.location.lon) {
             throw new Error('Missing location.');
         }
 
-        // Make sure the location is with six decimal places.
-        const locationSettings: Location = {
-            lat: Math.round(settings.location.lat * 1000000) / 1000000,
-            lon: Math.round(settings.location.lon * 1000000) / 1000000
-        }
+        const requestParams: NearestStopsFetchParams = {
+            location: {
+                lat: Math.round(settings.location.lat * 1000000) / 1000000,
+                lon: Math.round(settings.location.lon * 1000000) / 1000000
+            },
+            radius: settings.radius ?? 500
+        };
 
         const requestBody = {
             "Ambiente": {
@@ -219,15 +221,15 @@ export class MyCicero {
             },
             "DevicePosition": {
                 "Formato": 0,
-                "Lat": locationSettings.lat,
-                "Lng": locationSettings.lon
+                "Lat": requestParams.location.lat,
+                "Lng": requestParams.location.lon
             },
             "DistanzaMetri": settings.radius ?? 500,
             "IdDevice": "DEBUG",
             "Punto": {
                 "Formato": 0,
-                "Lat": locationSettings.lat,
-                "Lng": locationSettings.lon
+                "Lat": requestParams.location.lat,
+                "Lng": requestParams.location.lon
             },
         };
 

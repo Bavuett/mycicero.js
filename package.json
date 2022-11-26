@@ -1,6 +1,6 @@
 {
   "name": "mycicero.js",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "MyCicero module to get transport solutions in your Node.js project.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
