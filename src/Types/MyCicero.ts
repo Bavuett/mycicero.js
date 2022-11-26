@@ -38,9 +38,26 @@ interface GetNearestStopsSettings {
     radius?: number;
 }
 
+interface GetSolutionsParams {
+    locations: Locations;
+    dates: UnixDates;
+    passengers: Passengers;
+}
+
 interface NearestStopsFetchParams {
     location: Location;
     radius: number;
 }
 
-export { Headers, Dates, UnixDates, Passengers, Location, Locations, GetSolutionsSettings, GetNearestStopsSettings, NearestStopsFetchParams };
+export { 
+    Headers, 
+    Dates, 
+    UnixDates, 
+    Passengers, 
+    Location, 
+    Locations, 
+    GetSolutionsSettings, 
+    GetNearestStopsSettings, 
+    GetSolutionsParams, 
+    NearestStopsFetchParams 
+};

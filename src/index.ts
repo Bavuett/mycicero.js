@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { Dates, GetNearestStopsSettings, GetSolutionsSettings, Headers, Location, Locations, NearestStopsFetchParams, Passengers, UnixDates } from './Types/MyCicero';
+import { GetNearestStopsSettings, GetSolutionsParams, GetSolutionsSettings, Headers, Location, Locations, NearestStopsFetchParams } from './Types/MyCicero';
 import Solutions from './Types/Solutions';
 import SolutionsResult from './Types/SolutionsResult';
 import Stops from './Types/Stops';
@@ -49,7 +49,7 @@ export class MyCicero {
      * @returns {Solutions} Solutions object
     */
     async getSolutions(settings: GetSolutionsSettings): Promise<Solutions | void> {
-        // Make sure all the data necessary for the request is available. TODO: Improve this. Doesn't work in some cases.
+        // Make sure all the data necessary for the request is available.
         if (!settings.locations.departure || !settings.locations.arrival) {
             throw new Error('Missing departure or arrival location.');
         }
@@ -58,23 +58,27 @@ export class MyCicero {
             throw new Error('Missing departure date.');
         }
 
-        // Make sure the locations are with six decimal places.
-        const locationSettings: Locations = {
-            departure: {
-                lat: Math.round(settings.locations.departure.lat * 1000000) / 1000000,
-                lon: Math.round(settings.locations.departure.lon * 1000000) / 1000000
+        // Organize params as required by the API.
+        const requestParams: GetSolutionsParams = {
+            locations: {
+                departure: {
+                    lat: Math.round(settings.locations.departure.lat * 1000000) / 1000000,
+                    lon: Math.round(settings.locations.departure.lon * 1000000) / 1000000
+                },
+                arrival: {
+                    lat: Math.round(settings.locations.arrival.lat * 1000000) / 1000000,
+                    lon: Math.round(settings.locations.arrival.lon * 1000000) / 1000000
+                }
             },
-            arrival: {
-                lat: Math.round(settings.locations.arrival.lat * 1000000) / 1000000,
-                lon: Math.round(settings.locations.arrival.lon * 1000000) / 1000000
+            dates: {
+                departure: Math.floor(settings.dates.departure.getTime() / 1000),
+                arrival: settings.dates.arrival ? Math.floor(settings.dates.arrival.getTime() / 1000) : undefined
+            },
+            passengers: {
+                adults: settings.passengers?.adults ?? 1,
+                children: settings.passengers?.children ?? 0
             }
-        }
-
-        // Convert dates to Unix timestamps because MyCicero only accepts them in this format.
-        const datesSettings: UnixDates = {
-            departure: Math.floor(settings.dates.departure.getTime() / 1000),
-            arrival: settings.dates.arrival ? Math.floor(settings.dates.arrival.getTime() / 1000) : undefined
-        }
+        };
 
         const requestBody = {
             "Ambiente": {
@@ -89,8 +93,8 @@ export class MyCicero {
                 3,
                 15
             ],
-            "OraDa": `/Date(${datesSettings.departure}000+0200)/`,
-            "OraA": datesSettings.arrival ? `/Date(${datesSettings.arrival}000+0200)/` : null,
+            "OraDa": `/Date(${requestParams.dates.departure}000+0200)/`,
+            "OraA": requestParams.dates.arrival ? `/Date(${requestParams.dates.arrival}000+0200)/` : null,
             "ArrOraA": null,
             "ArrOraDa": null,
             "Ordinamento": {
@@ -98,23 +102,23 @@ export class MyCicero {
                 "Direzione": 0
             },
             "ActivateRunsOnNextDay": true,
-            "DataPartenza": `/Date(${datesSettings.departure}000+0200)/`,
+            "DataPartenza": `/Date(${requestParams.dates.departure}000+0200)/`,
             "PuntoOrigine": {
                 "Formato": 0,
-                "Lat": locationSettings.departure.lat,
-                "Lng": locationSettings.departure.lon
+                "Lat": requestParams.locations.departure.lat,
+                "Lng": requestParams.locations.departure.lon
             },
             "PuntoDestinazione": {
                 "Formato": 0,
-                "Lat": locationSettings.arrival.lat,
-                "Lng": locationSettings.arrival.lon
+                "Lat": requestParams.locations.arrival.lat,
+                "Lng": requestParams.locations.arrival.lon
             },
             "NumMaxSoluzioni": 8,
             "Intermodale": false,
             "ModalitaRicerca": 0,
             "TipoPercorso": 0,
             "MaxDistanzaAPiedi": null
-        }
+        };
 
         const response = await fetch(`${this.baseUrl}/FindTPSolutions`, {
             method: 'POST',
@@ -205,6 +209,7 @@ export class MyCicero {
             throw new Error('Missing location.');
         }
 
+        // Organize params as required by the API.
         const requestParams: NearestStopsFetchParams = {
             location: {
                 lat: Math.round(settings.location.lat * 1000000) / 1000000,
@@ -249,7 +254,7 @@ export class MyCicero {
 
         let result: Stops = {
             stops: []
-        }
+        };
 
         // TODO: Further improve formatting.
         data.Oggetti.map((item) => {
