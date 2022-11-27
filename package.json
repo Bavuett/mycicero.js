@@ -13,11 +13,12 @@
     "url": "git+https://github.com/Bavuett/mycicero.js.git"
   },
   "keywords": [
-    "Transport",
-    "Italy",
-    "MyCicero",
-    "Bus",
-    "Taxi"
+    "transport",
+    "italy",
+    "mycicero",
+    "bus",
+    "train",
+    "underground"
   ],
   "author": "Lorenzo Barretta",
   "license": "MIT",
