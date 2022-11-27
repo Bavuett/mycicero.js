@@ -5,7 +5,6 @@ interface Coordinate {
 }
 
 interface LocalitaDiscesa {
-    __type: string;
     CodAzienda: string;
     CodGruppoFermate: string;
     Codice: string;
@@ -20,12 +19,10 @@ interface LocalitaDiscesa {
     ModalitaTrasporto: number;
     PesoLocalita?: any;
     Servizi?: any;
-    StopSequence: number;
+    StopSequence?: any;
     Tipo: number;
-    UrlRealtimePage: string;
+    UrlRealtimePage?: any;
     VersioneTPS?: any;
-    Ambito?: any;
-    Distanza?: any;
 }
 
 interface Coordinate2 {
@@ -35,7 +32,6 @@ interface Coordinate2 {
 }
 
 interface LocalitaSalita {
-    __type: string;
     CodAzienda: string;
     CodGruppoFermate: string;
     Codice: string;
@@ -50,12 +46,10 @@ interface LocalitaSalita {
     ModalitaTrasporto: number;
     PesoLocalita?: any;
     Servizi?: any;
-    StopSequence: number;
+    StopSequence?: any;
     Tipo: number;
-    UrlRealtimePage: string;
+    UrlRealtimePage?: any;
     VersioneTPS?: any;
-    Ambito?: any;
-    Distanza?: any;
 }
 
 interface VendibilitaTratta {
@@ -66,27 +60,16 @@ interface VendibilitaTratta {
     IdSistema: string;
     NumeroTratta: number;
     OperazioniPossibili: number;
-    PrezzoTratta: number;
-    TipoServizioTP: string;
+    PrezzoTratta?: any;
+    TipoServizioTP?: any;
     Vendibile: boolean;
-    ZonaTariffariaDiscesa: string;
-    ZonaTariffariaSalita: string;
+    ZonaTariffariaDiscesa?: any;
+    ZonaTariffariaSalita?: any;
     _Messaggi?: any;
 }
 
-interface Corsa {
-    Codice: string;
-    CodiceAzienda: string;
-    CodiceInfoUtenza: string;
-    DataOraArrivo?: any;
-    DataOraPartenza: Date;
-    ID_Corsa: string;
-    OrarioFermate?: any;
-    PrenotazioneObbligatoria?: any;
-}
-
 interface Linea {
-    CodVettore: string;
+    CodVettore?: any;
     Codice: string;
     CodiceAzienda: string;
     CodiceEsterno?: any;
@@ -107,13 +90,27 @@ interface Linea {
     LogoVettoreApp: string;
     LogoVettoreEsteso: string;
     ModalitaTrasporto: number;
-    PrenotazioneObbligatoria: boolean;
+    PrenotazioneObbligatoria?: any;
     QuantitaFermate?: any;
-    Settori: any[];
+    Settori?: any;
     Tipo: number;
-    TipoServizio: string;
+    TipoServizio?: any;
     VersioneTPS?: any;
     Vettore: string;
+}
+
+interface InfoTreno {
+    CodiceTreno: string;
+    GruppoTreno: string;
+    TipoTreno: string;
+}
+
+interface PittogrammiServizi {
+    CodiceServizio: string;
+    Descrizione: string;
+    DescrizioneEstesa: string;
+    IdServizio: number;
+    NomeIcona: string;
 }
 
 interface Tratte {
@@ -123,26 +120,22 @@ interface Tratte {
     Numero: number;
     TipoTratta: number;
     VendibilitaTratta: VendibilitaTratta;
-    Corsa: Corsa;
+    Corsa?: any;
     IdGru?: any;
     InfoPrenotazione?: any;
     Linea: Linea;
     OrarioArrivo: Date;
     OrarioPartenza: Date;
-    offsetZonaMinuti: number;
+    offsetZonaMinuti?: any;
+    InfoTreno: InfoTreno;
+    PittogrammiServizi: PittogrammiServizi[];
+    PrenotazioneObbligatoria: boolean;
 }
 
-interface DettaglioTariffe {
-    RigaTariffa: number;
-    Tariffa: string;
-    TratteTariffabili: string[];
-}
-
-interface DettaglioImporti {
-    CodiceArticolo: string;
-    DettaglioTariffe: DettaglioTariffe[];
-    Importo: number;
-    NumeroTratteAssociate: number[];
+interface TPFindRequestParams {
+    ArrivalStation: string;
+    DataPartenza: Date;
+    DepartureStation: string;
 }
 
 interface Oggetti {
@@ -157,9 +150,9 @@ interface Oggetti {
     MinutiTotali: number;
     ModalitaRicerca: number;
     Numero: number;
-    NumeroArriviAlternativi?: any;
+    NumeroArriviAlternativi: number;
     NumeroCambi: number;
-    NumeroPartenzeAlternative?: any;
+    NumeroPartenzeAlternative: number;
     Partenza: string;
     PrimoMiglioRicercabile: boolean;
     SoluzioneExtra: boolean;
@@ -170,12 +163,14 @@ interface Oggetti {
     VersioneTPS: string;
     DataOraArrivo: Date;
     DataOraPartenza: Date;
-    DettaglioImporti: DettaglioImporti[];
+    DettaglioImporti?: any;
     MetriBordo: number;
     MetriPiedi: number;
     MinutiBordo: number;
     MinutiPiedi: number;
-    PrezzoSoluzione: number;
+    PrezzoSoluzione?: any;
+    SoluzioneVendibile: boolean;
+    TPFindRequestParams: TPFindRequestParams;
 }
 
 export default interface SolutionsResult {

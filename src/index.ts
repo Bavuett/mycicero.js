@@ -1,9 +1,11 @@
 import fetch from 'node-fetch';
 import { GetNearestStopsSettings, GetSolutionsParams, GetSolutionsSettings, Headers, Location, Locations, NearestStopsFetchParams } from './Types/MyCicero';
-import Solutions from './Types/Solutions';
+import Solutions, { Route, Solution } from './Types/Solutions';
 import SolutionsResult from './Types/SolutionsResult';
 import Stops from './Types/Stops';
 import StopsResult from './Types/StopsResult';
+import getMeansOfTransport from './Utils/getMeansOfTransport';
+import getUnixDate from './Utils/getUnixDate';
 
 export class MyCicero {
     private readonly baseUrl: string;
@@ -46,7 +48,7 @@ export class MyCicero {
      * @param {Passengers} [settings.passengers] Passengers of your trip - optional.
      * @param {number} settings.passengers.adults Number of adults.
      * @param {number} [settings.passengers.children] Number of children - optional.
-     * @returns {Solutions} Solutions object
+     * @returns {Solutions} Solutions object.
     */
     async getSolutions(settings: GetSolutionsSettings): Promise<Solutions | void> {
         // Make sure all the data necessary for the request is available.
@@ -83,12 +85,14 @@ export class MyCicero {
         const requestBody = {
             "Ambiente": {
                 "Ambiti": [
-                    0
+                  1  
                 ]
             },
             "NumeroAdulti": settings.passengers?.adults ?? 1,
             "NumeroRagazzi": settings.passengers?.children ?? 0,
             "FiltroModalita": [
+                0,
+                2,
                 1,
                 3,
                 15
@@ -114,7 +118,7 @@ export class MyCicero {
                 "Lng": requestParams.locations.arrival.lon
             },
             "NumMaxSoluzioni": 8,
-            "Intermodale": false,
+            "Intermodale": true,
             "ModalitaRicerca": 0,
             "TipoPercorso": 0,
             "MaxDistanzaAPiedi": null
@@ -139,56 +143,61 @@ export class MyCicero {
             solutions: [],
         };
         
-        data.Oggetti.map((item, index) => {
-            result.solutions.push({
-                price: item.PrezzoSoluzione,
-                arrival: item.DataOraArrivo,
+        data.Oggetti.map((item) => {
+            let solution: Solution = {
                 departure: item.DataOraPartenza,
+                arrival: item.DataOraArrivo,
                 minutes: {
                     total: item.MinutiTotali,
                     onFoot: item.MinutiPiedi,
-                    onVehicle: item.MinutiBordo
+                    onVehicle: item.MinutiBordo,
                 },
                 meters: {
                     total: item.MetriTotali,
                     onFoot: item.MetriPiedi,
-                    onVehicle: item.MetriBordo
+                    onVehicle: item.MetriBordo,
                 },
                 co2Emission: item.EmissioneCO2,
+                price: item.PrezzoSoluzione ?? 'Not available',
                 type: item.TipoSoluzione,
-                routes: []
-            });
+                routes: [],
+            };
 
-            item.Tratte.map((route) => {
-                result.solutions[index].routes.push({
+            item.Tratte.map((item) => {
+                let route: Route = {
                     line: {
-                        description: route.Linea.Descrizione,
-                        lineNumber: route.Linea.CodiceInfoUtenza,
+                        description: item.Linea.Descrizione,
+                        lineNumber: item.Linea.CodiceInfoUtenza,
+                        code: item.Linea.Codice,
+                        type: getMeansOfTransport(item.Linea.ModalitaTrasporto),
                         company: {
-                            code: route.Linea.CodiceAzienda,
-                            name: route.Linea.Vettore,
-                            logoUrl: route.Linea.LogoVettore
+                            name: item.Linea.Vettore,
+                            logoUrl: item.Linea.LogoVettoreEsteso,
+                            code: item.Linea.CodiceAzienda,
                         },
-                        bookingNeeded: route.Linea.PrenotazioneObbligatoria,
-                        type: route.Linea.TipoServizio,
-                        extraurban: route.Linea.Extraurbano
+                        bookingNeeded: item.Linea.PrenotazioneObbligatoria ?? false,
+                        extraurban: item.Linea.Extraurbano,
                     },
                     departure: {
-                        description: route.LocalitaSalita.Descrizione,
+                        description: item.LocalitaDiscesa.Descrizione,
                         location: {
-                            lat: route.LocalitaSalita.Coordinate.Lat,
-                            lon: route.LocalitaSalita.Coordinate.Lng
-                        },
+                            lat: item.LocalitaSalita.Coordinate.Lat,
+                            lon: item.LocalitaSalita.Coordinate.Lng,
+                        }
                     },
                     arrival: {
-                        description: route.LocalitaDiscesa.Descrizione,
+                        description: item.LocalitaSalita.Descrizione,
                         location: {
-                            lat: route.LocalitaDiscesa.Coordinate.Lat,
-                            lon: route.LocalitaDiscesa.Coordinate.Lng
+                            lat: item.LocalitaDiscesa.Coordinate.Lat,
+                            lon: item.LocalitaDiscesa.Coordinate.Lng,
                         }
                     }
-                });
+                };
+
+                solution.routes.push(route);
             });
+
+            result.solutions.push(solution);
         });
 
         return result;

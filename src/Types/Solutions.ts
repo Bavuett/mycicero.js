@@ -10,7 +10,7 @@ interface Meters {
     onVehicle: number | null;
 }
 
-interface Routes {
+interface Route {
     line: Line;
     departure: Stop;
     arrival: Stop;
@@ -19,6 +19,7 @@ interface Routes {
 interface Line {
     description: string;
     lineNumber: string;
+    code: string,
     company: Company;
     bookingNeeded: boolean;
     type: string;
@@ -42,12 +43,11 @@ interface Company {
 }
 
 interface Solution {
-    // TipoSoluzione.
     type: string;
-    price: number;
+    price: number | string;
     minutes: Minutes;
     meters: Meters;
-    routes: Routes[];
+    routes: Route[];
     departure: Date;
     arrival: Date;
     co2Emission: number;
@@ -56,3 +56,5 @@ interface Solution {
 export default interface Solutions {
     solutions: Solution[];
 }
+
+export { Route, Solution };

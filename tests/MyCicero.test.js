@@ -16,12 +16,12 @@ describe('MyCicero class methods', () => {
         myCicero.getSolutions({
             locations: {
                 departure: {
-                    lat: 42.4477,
-                    lon: 14.2080,
+                    lat: 41.90249000000006,
+                    lon: 12.496060000000057,
                 },
                 arrival: {
-                    lat: 42.4738,
-                    lon: 14.1925,
+                    lat: 42.44785999527568,
+                    lon: 14.208839989364549,
                 },
             }, 
             dates: {
