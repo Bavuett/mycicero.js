@@ -1,13 +1,12 @@
 import fetch from 'node-fetch';
-import { GetNearestStopsSettings, GetSolutionsParams, GetSolutionsSettings, Headers, Location, Locations, NearestStopsFetchParams } from './Types/MyCicero';
+import { GetNearestStopsSettings, GetSolutionsParams, GetSolutionsSettings, Headers, Location, Locations, MeanOfTransport, NearestStopsFetchParams } from './Types/MyCicero';
 import Solutions, { Route, Solution } from './Types/Solutions';
 import SolutionsResult from './Types/SolutionsResult';
 import Stops, { Stop } from './Types/Stops';
 import StopsResult from './Types/StopsResult';
 import getMeansOfTransport from './Utils/getMeansOfTransport';
-import getUnixDate from './Utils/getUnixDate';
 
-export class MyCicero {
+class MyCicero {
     private readonly baseUrl: string;
     private headers: Headers;
 
@@ -48,6 +47,7 @@ export class MyCicero {
      * @param {Passengers} [settings.passengers] Passengers of your trip - optional.
      * @param {number} settings.passengers.adults Number of adults.
      * @param {number} [settings.passengers.children] Number of children - optional.
+     * @param {('bus' | 'underground' | 'train')} [settings.meanOfTransport] Mean of transport used in solution - optional. Bus is default.
      * @returns {Solutions} Solutions object.
     */
     async getSolutions(settings: GetSolutionsSettings): Promise<Solutions> {
@@ -58,6 +58,10 @@ export class MyCicero {
 
         if (!settings.dates.departure) {
             throw new Error('Missing departure date.');
+        }
+
+        if (settings.meanOfTransport && settings.meanOfTransport != ('bus' || 'train' || 'undeground')) {
+            throw new Error('Mean of transport is not valid. Accepted values are bus, train, or undeground.');
         }
 
         // Organize params as required by the API.
@@ -79,7 +83,8 @@ export class MyCicero {
             passengers: {
                 adults: settings.passengers?.adults ?? 1,
                 children: settings.passengers?.children ?? 0
-            }
+            },
+            meanOfTransport: settings.meanOfTransport ?? 'bus',
         };
 
         const requestBody = {
@@ -283,3 +288,5 @@ export class MyCicero {
         return result;
     }
 }
+
+export { MyCicero };

@@ -27,10 +27,13 @@ interface Passengers {
     children?: number;
 }
 
+type MeanOfTransport = 'bus' | 'train' | 'underground';
+
 interface GetSolutionsSettings {
     locations: Locations;
     dates: Dates;
     passengers?: Passengers;
+    meanOfTransport?: MeanOfTransport;
 }
 
 interface GetNearestStopsSettings {
@@ -42,6 +45,7 @@ interface GetSolutionsParams {
     locations: Locations;
     dates: UnixDates;
     passengers: Passengers;
+    meanOfTransport: MeanOfTransport;
 }
 
 interface NearestStopsFetchParams {
@@ -55,7 +59,8 @@ export {
     UnixDates, 
     Passengers, 
     Location, 
-    Locations, 
+    Locations,
+    MeanOfTransport, 
     GetSolutionsSettings, 
     GetNearestStopsSettings, 
     GetSolutionsParams, 
