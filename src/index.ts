@@ -50,7 +50,7 @@ export class MyCicero {
      * @param {number} [settings.passengers.children] Number of children - optional.
      * @returns {Solutions} Solutions object.
     */
-    async getSolutions(settings: GetSolutionsSettings): Promise<Solutions | void> {
+    async getSolutions(settings: GetSolutionsSettings): Promise<Solutions> {
         // Make sure all the data necessary for the request is available.
         if (!settings.locations.departure || !settings.locations.arrival) {
             throw new Error('Missing departure or arrival location.');
@@ -212,7 +212,7 @@ export class MyCicero {
      * @param {number} [settings.radius] Radius in meters to search for stops - optional.
      * @returns {Stops} Stops object.
     */
-    async getNearestStops(settings: GetNearestStopsSettings): Promise<Stops | void> {
+    async getNearestStops(settings: GetNearestStopsSettings): Promise<Stops> {
         // Make sure all the data necessary for the request is available.
         if (!settings.location.lat || !settings.location.lon) {
             throw new Error('Missing location.');
