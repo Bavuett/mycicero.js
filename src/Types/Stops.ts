@@ -15,3 +15,5 @@ interface Stop {
 export default interface Stops {
     stops: Stop[],
 }
+
+export { Stop };

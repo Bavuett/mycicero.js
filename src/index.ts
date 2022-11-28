@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 import { GetNearestStopsSettings, GetSolutionsParams, GetSolutionsSettings, Headers, Location, Locations, NearestStopsFetchParams } from './Types/MyCicero';
 import Solutions, { Route, Solution } from './Types/Solutions';
 import SolutionsResult from './Types/SolutionsResult';
-import Stops from './Types/Stops';
+import Stops, { Stop } from './Types/Stops';
 import StopsResult from './Types/StopsResult';
 import getMeansOfTransport from './Utils/getMeansOfTransport';
 import getUnixDate from './Utils/getUnixDate';
@@ -138,7 +138,6 @@ export class MyCicero {
             throw new Error(`Error parsing JSON: ${err}`);
         });
 
-        // TODO: Further improve formatting.
         let result: Solutions = {
             solutions: [],
         };
@@ -265,19 +264,20 @@ export class MyCicero {
             stops: []
         };
 
-        // TODO: Further improve formatting.
         data.Oggetti.map((item) => {
-            result.stops.push({
+            let stop: Stop = {
                 description: item.Descrizione,
                 stopCode: item.CodiceInfoUtenza,
                 company: item.CodAzienda,
                 location: {
                     lat: item.Coordinate.Lat,
-                    lon: item.Coordinate.Lng
+                    lon: item.Coordinate.Lng,
                 },
                 city: item.Comune,
-                distance: item.Distanza
-            });
+                distance: item.Distanza,
+            };
+
+            result.stops.push(stop);
         });
 
         return result;
