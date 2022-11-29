@@ -5,6 +5,7 @@ import SolutionsResult from './Types/SolutionsResult';
 import Stops, { Stop } from './Types/Stops';
 import StopsResult from './Types/StopsResult';
 import getMeansOfTransport from './Utils/getMeansOfTransport';
+import getScopes from './Utils/getScopes';
 
 class MyCicero {
     private readonly baseUrl: string;
@@ -90,7 +91,7 @@ class MyCicero {
         const requestBody = {
             "Ambiente": {
                 "Ambiti": [
-                  1  
+                    1
                 ]
             },
             "NumeroAdulti": settings.passengers?.adults ?? 1,

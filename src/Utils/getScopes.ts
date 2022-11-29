@@ -1,4 +1,4 @@
-function getMeansOfTransportCode(meanOfTransport: string): number {
+function getScopes(meanOfTransport: string): number {
     switch (meanOfTransport) {
         case 'train': {
             return 1;
@@ -9,4 +9,4 @@ function getMeansOfTransportCode(meanOfTransport: string): number {
     }
 }
 
-export default getMeansOfTransportCode;
+export default getScopes;
