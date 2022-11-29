@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { GetNearestStopsSettings, GetSolutionsParams, GetSolutionsSettings, Headers, Location, Locations, MeanOfTransport, NearestStopsFetchParams } from './Types/MyCicero';
+import { GetNearestStopsSettings, GetSolutionsParams, GetSolutionsSettings, Headers, NearestStopsFetchParams } from './Types/MyCicero';
 import Solutions, { Route, Solution } from './Types/Solutions';
 import SolutionsResult from './Types/SolutionsResult';
 import Stops, { Stop } from './Types/Stops';
@@ -61,7 +61,7 @@ class MyCicero {
             throw new Error('Missing departure date.');
         }
 
-        if (settings.meanOfTransport && settings.meanOfTransport != ('bus' || 'train' || 'undeground')) {
+        if (settings.meanOfTransport && settings.meanOfTransport != 'bus' && settings.meanOfTransport != 'underground' && settings.meanOfTransport != 'train') {
             throw new Error('Mean of transport is not valid. Accepted values are bus, train, or undeground.');
         }
 
@@ -90,9 +90,7 @@ class MyCicero {
 
         const requestBody = {
             "Ambiente": {
-                "Ambiti": [
-                    1
-                ]
+                "Ambiti": [ getScopes(requestParams.meanOfTransport) ],
             },
             "NumeroAdulti": settings.passengers?.adults ?? 1,
             "NumeroRagazzi": settings.passengers?.children ?? 0,
