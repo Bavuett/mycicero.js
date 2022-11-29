@@ -6,7 +6,8 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "test": "tsc && jest ./tests/"
+    "prepare": "npm run build",
+    "test": "jest ./tests/"
   },
   "repository": {
     "type": "git",
@@ -18,7 +19,10 @@
     "mycicero",
     "bus",
     "train",
-    "underground"
+    "underground",
+    "api",
+    "api-wrapper",
+    "public-transportation"
   ],
   "author": "Lorenzo Barretta",
   "license": "MIT",
