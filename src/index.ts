@@ -1,9 +1,9 @@
 import fetch from 'node-fetch';
 import { GetNearestStopsSettings, GetSolutionsParams, GetSolutionsSettings, Headers, NearestStopsFetchParams } from './Types/MyCicero';
-import Solutions, { Route, Solution } from './Types/Solutions';
-import SolutionsResult from './Types/SolutionsResult';
 import Stops, { Stop } from './Types/Stops';
+import Solutions, { Route, Solution } from './Types/Solutions';
 import StopsResult from './Types/StopsResult';
+import SolutionsResult from './Types/SolutionsResult';
 import getMeansOfTransport from './Utils/getMeansOfTransport';
 import getScopes from './Utils/getScopes';
 

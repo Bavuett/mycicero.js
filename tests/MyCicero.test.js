@@ -16,12 +16,12 @@ describe('MyCicero class methods', () => {
         myCicero.getSolutions({
             locations: {
                 departure: {
-                    lat: 41.90249000000006,
-                    lon: 12.496060000000057,
+                    lat: 42.4477,
+                    lon: 14.2080,
                 },
                 arrival: {
-                    lat: 42.44785999527568,
-                    lon: 14.208839989364549,
+                    lat: 42.4738,
+                    lon: 14.1925,
                 },
             }, 
             dates: {
@@ -37,5 +37,53 @@ describe('MyCicero class methods', () => {
                 lon: 14.2080,
             }
         }).resolves;
+    });
+});
+
+describe('MyCicero class methods with wrong parameters', () => {
+    test('getSolutions() with wrong mean of transport should fail', () => {
+        myCicero.getSolutions({
+            locations: {
+                departure: {
+                    lat: 42.4477,
+                    lon: 14.2080,
+                },
+                arrival: {
+                    lat: 42.4738,
+                    lon: 14.1925,
+                },
+            }, 
+            dates: {
+                departure: new Date(),
+            },
+            meanOfTransport: 'anythingButTheRightValue',
+        }).catch((error) => {
+            expect(error).toBeInstanceOf(Error);
+        });
+    });
+
+    test('getSolutions() with wrong or missing location should fail', () => {
+        myCicero.getSolutions({
+            location: {
+                departure: {
+                    lat: 42.4477,
+                },
+            },
+            dates: {
+                departure: new Date(),
+            }
+        }).catch((error) => {
+            expect(error).toBeInstanceOf(Error);
+        });
+    });
+
+    test('getNearestStops() with wrong or missing location should fail', () => {
+        myCicero.getNearestStops({
+            location: {
+                lat: 42.4477,
+            },
+        }).catch((error) => {
+            expect(error).toBeInstanceOf(Error);
+        });
     });
 });
