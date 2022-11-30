@@ -58,8 +58,20 @@ class MyCicero {
             throw new Error('Missing departure or arrival location.');
         }
 
+        if (typeof (settings.locations.departure.lat) !== 'number' || typeof (settings.locations.departure.lon) !== 'number') {
+            throw new Error('Departure coordinates are not numbers.');
+        }
+
+        if (typeof (settings.locations.arrival.lat) !== 'number' || typeof (settings.locations.arrival.lon) !== 'number') {
+            throw new Error('Arrival coordinates are not numbers.');
+        }
+
         if (!settings.dates.departure) {
             throw new Error('Missing departure date.');
+        }
+
+        if (settings.dates.arrival && settings.dates.arrival.getTime() / 1000 < settings.dates.departure.getTime() / 1000) {
+            throw new Error('Arrival date cannot be before departure date.');
         }
 
         if (settings.meanOfTransport && settings.meanOfTransport != 'bus' && settings.meanOfTransport != 'underground' && settings.meanOfTransport != 'train') {
@@ -83,8 +95,8 @@ class MyCicero {
                 arrival: settings.dates.arrival ? Math.floor(settings.dates.arrival.getTime() / 1000) : undefined
             },
             passengers: {
-                adults: settings.passengers?.adults ?? 1,
-                children: settings.passengers?.children ?? 0
+                adults: settings.passengers?.adults ? Math.floor(settings.passengers?.adults) : 1,
+                children: settings.passengers?.children ? Math.floor(settings.passengers?.children) : 0
             },
             meanOfTransport: settings.meanOfTransport ?? 'bus',
         };
