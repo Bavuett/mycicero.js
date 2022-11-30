@@ -16,6 +16,8 @@ jobs:
         with: 
           node-version: 18
           registry-url: https://registry.npmjs.org
+      - name: Install dependencies
+        run: npm install
       - name: Release to npm
         run: npm publish --access public
         env: 
