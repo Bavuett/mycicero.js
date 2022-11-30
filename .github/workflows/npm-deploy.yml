@@ -1,0 +1,22 @@
+name: Release to npm
+
+on:
+  release:
+    types: [published]
+
+jobs: 
+  release: 
+    name: Release to npm.
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Checkout.
+        uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with: 
+          node-version: 18
+          registry-url: https://registry.npmjs.org
+      - name: Release to npm
+        run: npm publish --access public
+        env: 
+          NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
