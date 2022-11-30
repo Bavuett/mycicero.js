@@ -1,6 +1,6 @@
 {
   "name": "mycicero.js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "npm package to get Italian Transport Solutions and other data powered by MyCicero.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
