@@ -1,7 +1,7 @@
 {
   "name": "mycicero.js",
-  "version": "0.0.1",
-  "description": "MyCicero module to get transport solutions in your Node.js project.",
+  "version": "1.0.0",
+  "description": "npm package to get Italian Transport Solutions and other data powered by MyCicero.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
