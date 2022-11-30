@@ -77,6 +77,27 @@ describe('MyCicero class methods with wrong parameters', () => {
         });
     });
 
+    test("getSolutions() doesn't allow time paradoxes" , () => {
+        myCicero.getSolutions({
+            locations: {
+                departure: {
+                    lat: 42.4477,
+                    lon: 14.2080,
+                },
+                arrival: {
+                    lat: 42.4738,
+                    lon: 14.1925,
+                },
+            }, 
+            dates: {
+                departure: new Date(166982450000),
+                arrival: new Date(1669824492)
+            }
+        }).catch((error) => {
+            expect(error).toBeInstanceOf(Error);
+        });
+    });
+
     test('getNearestStops() with wrong or missing location should fail', () => {
         myCicero.getNearestStops({
             location: {
