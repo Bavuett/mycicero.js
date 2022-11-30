@@ -6,6 +6,7 @@ import StopsResult from './Types/StopsResult';
 import SolutionsResult from './Types/SolutionsResult';
 import getMeansOfTransport from './Utils/getMeansOfTransport';
 import getScopes from './Utils/getScopes';
+import getUnixDate from './Utils/getUnixDate';
 
 class MyCicero {
     private readonly baseUrl: string;
@@ -148,8 +149,8 @@ class MyCicero {
         
         data.Oggetti.map((item) => {
             let solution: Solution = {
-                departure: item.DataOraPartenza,
-                arrival: item.DataOraArrivo,
+                departure: getUnixDate(item.DataOraPartenza),
+                arrival: getUnixDate(item.DataOraArrivo),
                 minutes: {
                     total: item.MinutiTotali,
                     onFoot: item.MinutiPiedi,

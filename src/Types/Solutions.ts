@@ -48,8 +48,8 @@ interface Solution {
     minutes: Minutes;
     meters: Meters;
     routes: Route[];
-    departure: Date;
-    arrival: Date;
+    departure: number;
+    arrival: number;
     co2Emission: number;
 }
 

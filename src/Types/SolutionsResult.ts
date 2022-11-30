@@ -124,8 +124,8 @@ interface Tratte {
     IdGru?: any;
     InfoPrenotazione?: any;
     Linea: Linea;
-    OrarioArrivo: Date;
-    OrarioPartenza: Date;
+    OrarioArrivo: string;
+    OrarioPartenza: string;
     offsetZonaMinuti?: any;
     InfoTreno: InfoTreno;
     PittogrammiServizi: PittogrammiServizi[];
@@ -134,7 +134,7 @@ interface Tratte {
 
 interface TPFindRequestParams {
     ArrivalStation: string;
-    DataPartenza: Date;
+    DataPartenza: string;
     DepartureStation: string;
 }
 
@@ -161,8 +161,8 @@ interface Oggetti {
     Tratte: Tratte[];
     UltimoMiglioRicercabile: boolean;
     VersioneTPS: string;
-    DataOraArrivo: Date;
-    DataOraPartenza: Date;
+    DataOraArrivo: string;
+    DataOraPartenza: string;
     DettaglioImporti?: any;
     MetriBordo: number;
     MetriPiedi: number;
