@@ -1,6 +1,6 @@
 {
   "name": "mycicero.js",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "npm package to get Italian Transport Solutions and other data powered by MyCicero.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -44,10 +44,9 @@
   "files": [
     "dist/*.js",
     "dist/*.d.ts",
-    "dist/src/*",
-    "dist/src/*.js",
-    "dist/src/*.d.ts",
-    "dist/src/**/*.js",
-    "dist/src/**/*.d.ts"
+    "dist/**/*.js",
+    "dist/**/*.js.map",
+    "dist/**/*.d.ts",
+    "dist/**/*.d.ts.map"
   ]
 }
