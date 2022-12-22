@@ -46,7 +46,7 @@ await myCicero.getSolutions({
     meanOfTransport: 'train'
 });
 
-await myCicero.getNearesStops({
+await myCicero.getNearestStops({
     location: {
         lat: 42.4477,
         lon: 14.2080,
