@@ -31,14 +31,14 @@
   },
   "homepage": "https://github.com/Bavuett/mycicero.js#readme",
   "dependencies": {
-    "node-fetch": "^2.6.7"
+    "node-fetch": "^2.6.7",
+    "tslib": "^2.4.1"
   },
   "devDependencies": {
     "@types/jest": "^29.2.3",
     "@types/node": "^18.11.9",
     "@types/node-fetch": "^2.6.2",
     "jest": "^29.3.1",
-    "tslib": "^2.4.1",
     "typescript": "^5.0.2"
   },
   "files": [
